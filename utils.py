@@ -93,7 +93,7 @@ def load_cfg(yaml_filepath):
     # Read YAML experiment definition file
     import yaml
     with open(yaml_filepath, 'r') as stream:
-        cfg = yaml.load(stream)
+        cfg = yaml.load(stream, Loader=yaml.FullLoader)
     cfg = make_paths_absolute(os.path.dirname(yaml_filepath), cfg)
     return cfg
 
@@ -122,9 +122,10 @@ def make_paths_absolute(dir_, cfg):
     return cfg
 
 
-def ims_to_comet(experiment, images, labels):
+def ims_to_comet(experiment, images, labels, type):
     for i, image in enumerate(images):
-        experiment.log_image(image, name="image {}, class:{}".format(i, labels[i]))
+        experiment.log_image(image.numpy(), name="{} class image {}, class:{}".format(type, i, labels[i]),
+                             image_channels="first")
 
 
 def weights_to_comet(experiment, model, step, hist_name):
